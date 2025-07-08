@@ -5,16 +5,24 @@ import os
 from fastapi.responses import FileResponse
 import tempfile
 from starlette.background import BackgroundTask
+import random
 
 app = FastAPI()
 
 class DownloadRequest(BaseModel):
     video_url: str
 
+proxies = [
+    'http://14.171.47.152:8080',
+    'http://34.155.66.102:8080',
+    'http://27.79.241.234:16000',
+]
+
 @app.post("/download-audio/")
 def download_audio_api(request: DownloadRequest):
     temp_dir = tempfile.gettempdir()
     output_path = os.path.join(temp_dir, 'audio.%(ext)s')
+    proxy = random.choice(proxies)
     ydl_opts = {
         'format': 'bestaudio/best',
         'outtmpl': output_path,
@@ -23,6 +31,7 @@ def download_audio_api(request: DownloadRequest):
             'preferredcodec': 'mp3',
             'preferredquality': '192',
         }],
+        'proxy': proxy,
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -44,10 +53,12 @@ def download_audio_api(request: DownloadRequest):
 def download_video_api(request: DownloadRequest):
     temp_dir = tempfile.gettempdir()
     output_path = os.path.join(temp_dir, 'video.%(ext)s')
+    proxy = random.choice(proxies)
     ydl_opts = {
         'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/mp4',
         'outtmpl': output_path,
         'merge_output_format': 'mp4',
+        'proxy': proxy,
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
