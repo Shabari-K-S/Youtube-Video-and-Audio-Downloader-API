@@ -13,9 +13,7 @@ class DownloadRequest(BaseModel):
     video_url: str
 
 proxies = [
-    'http://14.171.47.152:8080',
-    'http://34.155.66.102:8080',
-    'http://27.79.241.234:16000',
+    "your proxies here"
 ]
 
 @app.post("/download-audio/")
